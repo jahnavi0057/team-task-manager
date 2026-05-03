@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Task Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --page-bg: #0b0b0d;
+      --card-bg: rgba(10, 12, 16, 0.72);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --glass-bg: rgba(255, 255, 255, 0.14);
+      --glass-border: rgba(255, 255, 255, 0.32);
+      --accent: #6ee7ff;
+      --accent-2: #a6ffcf;
+      --text-main: #f7f7fb;
+      --text-muted: rgba(255, 255, 255, 0.68);
+      --shadow-strong: 0 22px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Plus Jakarta Sans", "Space Grotesk", sans-serif;
+      color: var(--text-main);
+      background: var(--page-bg);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("assets/group-discussion.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(110, 231, 255, 0.25), transparent 55%),
+        radial-gradient(circle at 20% 70%, rgba(166, 255, 207, 0.2), transparent 50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      padding: 40px 8vw 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.95rem;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      opacity: 1;
+    }
+
+    .hero {
+      max-width: 820px;
+    }
+
+    .hero h1 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(2.4rem, 3vw, 3.2rem);
+      margin: 0 0 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px;
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .card h2 {
+      font-family: "Space Grotesk", sans-serif;
+      margin: 0 0 8px;
+      font-size: 1.6rem;
+    }
+
+    .card p {
+      margin: 0 0 24px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .field input {
+      background: rgba(6, 8, 12, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      outline: none;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .field input:focus {
+      border-color: rgba(110, 231, 255, 0.6);
+      box-shadow: 0 0 0 3px rgba(110, 231, 255, 0.15);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .shimmer-button {
+      position: relative;
+      overflow: hidden;
+      padding: 12px 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0a0a0c;
+      color: #f9f9f9;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.98rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .shimmer-button span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .shimmer-button::after {
+      content: "";
+      position: absolute;
+      top: -60%;
+      left: -30%;
+      width: 45%;
+      height: 220%;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      transform: translateX(-140%);
+      animation: shimmer 2.6s infinite;
+    }
+
+    .shimmer-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px rgba(0, 0, 0, 0.55);
+    }
+
+    .shimmer-button.ghost {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .shimmer-button.ghost::after {
+      opacity: 0.7;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-140%);
+      }
+      55% {
+        transform: translateX(260%);
+      }
+      100% {
+        transform: translateX(260%);
+      }
+    }
+
+    .tasks-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .notice {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(110, 231, 255, 0.3);
+      background: rgba(7, 9, 13, 0.7);
+      color: var(--text-main);
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .notice.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notice.success {
+      border-color: rgba(166, 255, 207, 0.5);
+      color: #e9fff5;
+    }
+
+    .notice.error {
+      border-color: rgba(255, 126, 126, 0.5);
+      color: #ffecec;
+    }
+
+    .notice.info {
+      border-color: rgba(110, 231, 255, 0.5);
+    }
+
+    .glass-search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px);
+      box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.06);
+      min-width: 220px;
+    }
+
+    .glass-search svg {
+      width: 18px;
+      height: 18px;
+      fill: rgba(255, 255, 255, 0.7);
+    }
+
+    .glass-search input {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      width: 100%;
+      outline: none;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      align-items: center;
+    }
+
+    .form-grid input,
+    .form-grid select {
+      background: rgba(6, 8, 12, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: var(--text-main);
+      font-size: 0.98rem;
+      outline: none;
+    }
+
+    .form-grid select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.7) 50%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.7) 50%, transparent 50%);
+      background-position: calc(100% - 18px) 18px, calc(100% - 12px) 18px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 34px;
+    }
+
+    .task-list {
+      margin-top: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .task-item,
+    .project-item,
+    .stat-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 14px 16px;
+      border-radius: 16px;
+      backdrop-filter: blur(6px);
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .task-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .task-meta,
+    .project-meta {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      text-transform: capitalize;
+    }
+
+    .status-badge.pending {
+      background: rgba(255, 217, 118, 0.15);
+      color: #ffe2a6;
+    }
+
+    .status-badge.completed {
+      background: rgba(166, 255, 207, 0.15);
+      color: #c4ffe7;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card h3 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .stat-card span {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .project-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .project-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .project-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--text-main);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .pill.danger {
+      border-color: rgba(255, 126, 126, 0.45);
+      color: #ffd1d1;
+    }
+
+    .task-controls {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .auth-status {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .hint {
+      margin-top: 18px;
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding: 32px 6vw 56px;
+      }
+
+      .top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="brand">Team Task Manager</div>
+      <div class="nav-links">
+        <a href="#auth">Auth</a>
+        <a href="#projects">Projects</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#tasks">Tasks</a>
+      </div>
+      <button class="shimmer-button ghost" onclick="logout()"><span>Log out</span></button>
+    </nav>
+
+    <header class="hero">
+      <h1>Stay aligned with every task</h1>
+      <p>Authenticate, spin up projects, and keep tasks visible for the entire team in one focused space.</p>
+      <div id="notice" class="notice" role="status"></div>
+    </header>
+
+    <main class="grid">
+      <div class="stack">
+        <section class="card" id="auth">
+          <h2>Authentication</h2>
+          <p>Use your account to access protected task data.</p>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="you@company.com" autocomplete="email">
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+          </div>
+
+          <div class="button-row">
+            <button class="shimmer-button" onclick="login()"><span>Log in</span></button>
+            <button class="shimmer-button ghost" onclick="signup()"><span>Create account</span></button>
+          </div>
+
+          <div id="auth-status" class="auth-status">Not logged in yet.</div>
+        </section>
+
+        <section class="card" id="projects">
+          <div class="section-head">
+            <div>
+              <h2>Project management</h2>
+              <p>Create a project and trigger quick actions.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <input id="project-name" placeholder="Project name">
+            <button class="shimmer-button" onclick="createProject()"><span>Create project</span></button>
+          </div>
+
+          <div id="project-list" class="project-list"></div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card" id="dashboard">
+          <h2>Dashboard</h2>
+          <p>Track overall task progress in real time.</p>
+
+          <div class="stat-grid">
+            <div class="stat-card">
+              <h3 id="total-tasks">0</h3>
+              <span>Total tasks</span>
+            </div>
+            <div class="stat-card">
+              <h3 id="completed-tasks">0</h3>
+              <span>Completed</span>
+            </div>
+            <div class="stat-card">
+              <h3 id="pending-tasks">0</h3>
+              <span>Pending</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="tasks">
+          <div class="tasks-header">
+            <div>
+              <h2>Task management</h2>
+              <p>Create tasks, assign owners, and track status.</p>
+            </div>
+            <div class="glass-search" aria-label="Search tasks">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10.5 3a7.5 7.5 0 1 0 4.7 13.34l3.23 3.23a1 1 0 0 0 1.42-1.42l-3.23-3.23A7.5 7.5 0 0 0 10.5 3zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11z" />
+              </svg>
+              <input id="task-search" type="search" placeholder="Search tasks" aria-label="Search tasks">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <input id="task-title" placeholder="Task title" autocomplete="off">
+            <input id="task-assignee" placeholder="Assign to (email)" autocomplete="off">
+            <select id="task-status" aria-label="Task status">
+              <option value="todo">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+            <button class="shimmer-button" onclick="createTask()"><span>Add task</span></button>
+          </div>
+
+          <div class="task-controls">
+            <span class="task-meta" id="task-count">No tasks loaded</span>
+            <button class="shimmer-button ghost" onclick="getTasks()"><span>Refresh</span></button>
+          </div>
+
+          <div id="task-list" class="task-list"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
