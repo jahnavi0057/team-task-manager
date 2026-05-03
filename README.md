@@ -54,6 +54,10 @@ team-task-manager/
    http://localhost:5000
    ```
 
+## Deployment
+Live demo:
+https://team-task-manager-git-main-jahnavi0057s-projects.vercel.app
+
 ## How To Use
 1. **Sign up or log in** using the Authentication card. The JWT token is stored in localStorage under `token`.
 2. **Create projects** in the Project Management card. Projects are stored locally in localStorage to keep the demo simple.
